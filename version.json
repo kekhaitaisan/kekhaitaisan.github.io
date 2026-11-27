@@ -1,6 +1,6 @@
 {
-  "version": "1.3.3",
+  "version": "1.3.4",
   "build": "2026-11-27",
-  "notes": "Thêm video hướng dẫn sử dụng (5 phần) ngay trong ứng dụng.",
+  "notes": "Nút Video hướng dẫn nổi bật trên thanh trên cùng.",
   "download": "https://kekhaitaisan.github.io/KeKhaiTSTN.html"
 }

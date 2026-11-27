@@ -323,6 +323,15 @@ textarea.bad{border-color:#D9534F;box-shadow:0 0 0 3px rgba(217,83,79,.15)}
 .vitem em{display:inline-block;font-style:normal;font-size:11.5px;color:var(--faint);margin-top:3px}
 @media (max-width:900px){.vwrap{grid-template-columns:1fr}.vlist{max-height:none}}
 @media print{.vidcta{display:none!important}}
+/* ---- nút video nổi bật trên thanh trên cùng */
+.tb.vid{position:relative;background:var(--seal);color:#fff;border-color:#C4362E;font-weight:600;margin-right:6px;box-shadow:0 2px 10px rgba(168,32,26,.45)}
+.tb.vid:hover{background:#C0271F;color:#fff;border-color:#D9473F}
+.tb.vid svg.i{width:19px;height:19px}
+.tb.vid .newdot{position:absolute;top:-9px;right:-12px;font-style:normal;font-size:10.5px;font-weight:700;line-height:1;background:#E9C77A;color:#3A2A05;border-radius:999px;padding:3px 6px;box-shadow:0 0 0 2px var(--ink);animation:newpulse 1.8s ease-in-out 3}
+@keyframes newpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+@media (prefers-reduced-motion:reduce){.tb.vid .newdot{animation:none}}
+@media (max-width:1200px){.tb.vid span{display:none}}
+@media (max-width:1440px){.tb.inst span,.tb.fb span{display:none}.tb.inst{padding-left:10px;padding-right:10px}}
 
 </style>
 </head>
@@ -342,7 +351,7 @@ textarea.bad{border-color:#D9534F;box-shadow:0 0 0 3px rgba(217,83,79,.15)}
 
 const APP = {
   name: 'Kê khai TSTN',
-  version: '1.3.3',
+  version: '1.3.4',
   build: '2026-11-27',
   author: 'Lê Quang Trọng',
   place: 'đảo Phú Quý',
@@ -2273,12 +2282,12 @@ function renderShell() {
   <header class="top"><div class="brand"><div class="seal"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9.5 13l2 2 3.5-4"/></svg></div><div><b>${esc(K.APP.name)}</b><small>Mẫu Nghị định 164/2026/NĐ-CP · bản ${K.APP.version}</small></div></div>
     <div class="seg" role="tablist"><button data-mode="kekhai" class="${ui.mode === 'kekhai' ? 'on' : ''}">${ic('user')}Người kê khai</button><button data-mode="daumoi" class="${ui.mode === 'daumoi' ? 'on' : ''}">${ic('building')}Đầu mối đơn vị</button></div>
     <div class="sp"></div><span class="saved" id="saved"></span>
+    <button class="tb vid" data-act="videos" title="Xem video hướng dẫn sử dụng (5 phần, khoảng 2 phút rưỡi)">${ic('play')}<span>Video hướng dẫn</span>${seenVideo() ? '' : '<i class="newdot">Mới</i>'}</button>
     <button class="tb inst" data-act="install" id="instTop" title="Cài ứng dụng vào máy tính, điện thoại">${ic('install')}<span>Cài đặt ứng dụng</span></button>
     <button class="tb" data-act="importOld" title="Nhận diện bản kê khai năm trước từ file Word">${ic('word')}<span>Nhập bản cũ</span></button>
     <button class="tb" data-act="openFile" title="Mở file dữ liệu .tstn/.json">${ic('folder')}<span>Mở</span></button>
     <button class="tb" data-act="saveAll" title="Sao lưu toàn bộ dữ liệu ra file">${ic('save')}<span>Sao lưu</span></button>
     <button class="tb" data-act="settings" title="Cài đặt">${ic('gear')}</button>
-    <button class="tb" data-act="videos" title="Video hướng dẫn sử dụng">${ic('play')}</button>
     <button class="tb fb" data-act="feedback" title="Góp ý, báo lỗi cho tác giả qua Zalo hoặc email">${ic('chat')}<span>Góp ý</span></button>
     <button class="tb" data-act="about" title="Giới thiệu, bản quyền">${ic('info')}</button></header>
   <div class="wrap"><aside class="side" id="side"></aside><main class="main" id="main"></main></div>
@@ -2859,7 +2868,10 @@ function videoBase() {
   const home = K.APP.homeUrl || '';
   return (location.protocol.startsWith('http') && home.startsWith(location.origin) ? '' : home) + 'video/';
 }
+function seenVideo() { try { return localStorage.getItem('KKTSTN_VID_SEEN') === '1'; } catch { return true; } }
 function videoModal(i = 0) {
+  try { localStorage.setItem('KKTSTN_VID_SEEN', '1'); } catch { /* bỏ qua */ }
+  document.querySelectorAll('.tb.vid .newdot').forEach(n => n.remove());
   const base = videoBase();
   const list = VIDEOS.map((v, k) => `<button class="vitem${k === i ? ' on' : ''}" data-vi="${k}"><img src="${base}${v.f}.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span><b>${k + 1}. ${esc(v.t)}</b><small>${esc(v.s)}</small><em>${v.d}</em></span></button>`).join('');
   modal(ic('play') + 'Video hướng dẫn', `<div class="vwrap"><div class="vmain"><video id="vplayer" controls playsinline preload="metadata" poster="${base}${VIDEOS[i].f}-p.jpg" src="${base}${VIDEOS[i].f}.mp4"></video>
