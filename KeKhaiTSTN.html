@@ -298,6 +298,31 @@ textarea.bad{border-color:#D9534F;box-shadow:0 0 0 3px rgba(217,83,79,.15)}
 .top .tb{white-space:nowrap}
 @media (max-width:1500px){.saved{font-size:0}.saved::before{margin-right:0}}
 @media (max-width:1400px){.top .tb[data-act=importOld] span,.top .tb[data-act=openFile] span,.top .tb[data-act=saveAll] span{display:none}}
+/* ---- video hướng dẫn */
+.vidcta{margin-top:18px;display:flex;align-items:center;gap:14px;max-width:760px;width:100%;text-align:left;background:var(--ink);color:#fff;border:0;border-radius:var(--r);padding:14px 18px;cursor:pointer;box-shadow:0 6px 18px rgba(22,35,63,.16)}
+.vidcta:hover{background:var(--ink-2)}
+.vidcta:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+.vidcta .vp{width:44px;height:44px;border-radius:50%;background:var(--seal);display:grid;place-items:center;flex:none}
+.vidcta .vp svg.i{width:24px;height:24px;color:#fff}
+.vidcta b{display:block;font-size:15.5px}
+.vidcta small{display:block;font-size:13px;color:#C9D3E6;margin-top:2px}
+.modal.vidm .box{max-width:1180px}
+.vwrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px}
+.vmain video{width:100%;aspect-ratio:16/9;background:#0E1730;border-radius:10px;display:block}
+.verr{aspect-ratio:16/9;border-radius:10px;background:#F4F6F9;border:1px dashed var(--line);display:flex;gap:10px;align-items:center;justify-content:center;padding:30px;color:var(--mute);font-size:14px}
+.verr[hidden]{display:none}
+.vcap{margin-top:10px;font-size:14px;color:var(--mute)}
+.vcap b{color:var(--ink)}
+.vlist{display:flex;flex-direction:column;gap:8px;max-height:560px;overflow:auto}
+.vitem{display:grid;grid-template-columns:108px 1fr;gap:10px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line-2);border-radius:9px;padding:6px;cursor:pointer}
+.vitem:hover{border-color:var(--line)}
+.vitem.on{border-color:var(--seal);box-shadow:0 0 0 2px var(--seal-soft)}
+.vitem img{width:108px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;background:#16233F}
+.vitem b{display:block;font-size:13.4px;color:var(--ink);line-height:1.3}
+.vitem small{display:block;font-size:12px;color:var(--mute);margin-top:2px;line-height:1.35}
+.vitem em{display:inline-block;font-style:normal;font-size:11.5px;color:var(--faint);margin-top:3px}
+@media (max-width:900px){.vwrap{grid-template-columns:1fr}.vlist{max-height:none}}
+@media print{.vidcta{display:none!important}}
 
 </style>
 </head>
@@ -317,7 +342,7 @@ textarea.bad{border-color:#D9534F;box-shadow:0 0 0 3px rgba(217,83,79,.15)}
 
 const APP = {
   name: 'Kê khai TSTN',
-  version: '1.3.2',
+  version: '1.3.3',
   build: '2026-11-27',
   author: 'Lê Quang Trọng',
   place: 'đảo Phú Quý',
@@ -1852,6 +1877,7 @@ const DB_KEY = 'KKTSTN_DB_V1', DB_ENC_KEY = 'KKTSTN_DB_V1_ENC';
 
 // ------------------------------------------------------------------ ICONS (nét vẽ tối giản)
 const ICONS = {
+  play: '<circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l5.5-3.5z" fill="currentColor" stroke="none"/>',
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/>',
   chat: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5z"/><path d="M8.5 8.5h7M8.5 11.5h4.5"/>',
   install: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/><path d="M12 7v5M9.5 9.5L12 12l2.5-2.5"/>',
@@ -1953,7 +1979,7 @@ function modal(title, bodyHtml, buttons = [], cls = '') {
     document.body.appendChild(m);
     const close = v => { m.remove(); res(v); };
     m.addEventListener('click', e => {
-      if (e.target.matches('[data-x]') || e.target === m) close(null);
+      if (e.target.closest('[data-x]') || e.target === m) close(null);
       const b = e.target.closest('[data-i]'); if (b) { const btn = buttons[+b.dataset.i]; const v = btn.value !== undefined ? btn.value : true; if (btn.onClick) { const r = btn.onClick(m); if (r === false) return; close(r === undefined ? v : r); } else close(v); }
     });
     const first = m.querySelector('input,textarea,select'); if (first) setTimeout(() => first.focus(), 50);
@@ -2252,6 +2278,7 @@ function renderShell() {
     <button class="tb" data-act="openFile" title="Mở file dữ liệu .tstn/.json">${ic('folder')}<span>Mở</span></button>
     <button class="tb" data-act="saveAll" title="Sao lưu toàn bộ dữ liệu ra file">${ic('save')}<span>Sao lưu</span></button>
     <button class="tb" data-act="settings" title="Cài đặt">${ic('gear')}</button>
+    <button class="tb" data-act="videos" title="Video hướng dẫn sử dụng">${ic('play')}</button>
     <button class="tb fb" data-act="feedback" title="Góp ý, báo lỗi cho tác giả qua Zalo hoặc email">${ic('chat')}<span>Góp ý</span></button>
     <button class="tb" data-act="about" title="Giới thiệu, bản quyền">${ic('info')}</button></header>
   <div class="wrap"><aside class="side" id="side"></aside><main class="main" id="main"></main></div>
@@ -2318,6 +2345,7 @@ function welcome() {
       <button class="start" data-act="openFile"><span class="ic">${ic('folder')}</span><span><b>Mở file dữ liệu đã lưu</b><small>File .tstn sao lưu năm trước, hoặc file đầu mối gửi trả kèm góp ý</small></span><span class="go">${ic('chev')}</span></button>
     </div>
     <div class="minor"><a data-act="newHS" data-ho="1">${ic('users')}Kê khai hộ nhiều người</a><a data-act="mode" data-mode="daumoi">${ic('building')}Tôi là đầu mối đơn vị</a><a data-act="pasteOld">${ic('paste')}Dán nội dung từ PDF</a></div>
+    <button class="vidcta" data-act="videos"><span class="vp">${ic('play')}</span><span><b>Xem video hướng dẫn</b><small>5 phần ngắn, khoảng 2 phút rưỡi: bắt đầu, lập bản kê khai, rà soát và xuất file, năm sau, đầu mối đơn vị</small></span></button>
     ${installCard()}
     <p class="privacy">${ic('lock')}<span>Dữ liệu chỉ lưu trên máy tính này và trong các file bạn tự lưu. Ứng dụng không có máy chủ và không gửi dữ liệu đi đâu.</span></p>
   </div>
@@ -2398,6 +2426,7 @@ async function onClick(e) {
     case 'settings': return settingsModal();
     case 'about': return aboutModal();
     case 'feedback': return feedbackModal();
+    case 'videos': return videoModal(+el.dataset.ch || 0);
     default: if (act.startsWith('dm')) return dmClick(e, el, act);
   }
 }
@@ -2577,7 +2606,7 @@ function aboutModal() {
   <p><b>Căn cứ pháp lý:</b> Luật Phòng, chống tham nhũng số 36/2018/QH14 được sửa đổi, bổ sung bởi Luật số 59/2020/QH14, 81/2025/QH15, 132/2025/QH15; Nghị định số 164/2026/NĐ-CP ngày 15/5/2026 của Chính phủ về kiểm soát tài sản, thu nhập (mẫu bản kê khai tại Phụ lục); Nghị định số 161/2026/NĐ-CP (lương cơ sở).</p>
   <p><b>Quyền riêng tư:</b> Dữ liệu chỉ lưu trong trình duyệt trên máy của bạn và trong các file bạn tự lưu. Ứng dụng không có máy chủ, không thu thập, không gửi dữ liệu đi đâu. Khi có mạng, ứng dụng chỉ kiểm tra số phiên bản mới (không gửi kèm dữ liệu).</p>
   <p><b>Lưu ý:</b> Kết quả "tự rà soát" là công cụ hỗ trợ, không thay thế việc hướng dẫn, kiểm tra, xác minh của cơ quan, đơn vị có thẩm quyền. Người kê khai chịu trách nhiệm về tính trung thực, đầy đủ của bản kê khai.</p>
-  <p class="small mut">Liên hệ góp ý, báo lỗi: Zalo ${esc(K.APP.phone)} · <a href="mailto:${esc(K.APP.email)}">${esc(K.APP.email)}</a></p>`, [{ label: ic('chat') + 'Gửi góp ý', value: 'fb' }, { label: 'Đóng', cls: 'pri' }]).then(v => { if (v === 'fb') feedbackModal(); });
+  <p class="small mut">Liên hệ góp ý, báo lỗi: Zalo ${esc(K.APP.phone)} · <a href="mailto:${esc(K.APP.email)}">${esc(K.APP.email)}</a></p>`, [{ label: ic('play') + 'Video hướng dẫn', value: 'vid' }, { label: ic('chat') + 'Gửi góp ý', value: 'fb' }, { label: 'Đóng', cls: 'pri' }]).then(v => { if (v === 'fb') feedbackModal(); if (v === 'vid') videoModal(0); });
 }
 
 // ------------------------------------------------------------------ ĐẦU MỐI: TIẾP NHẬN, THẨM ĐỊNH SƠ BỘ, ĐỀ NGHỊ CHỈNH SỬA
@@ -2816,6 +2845,40 @@ async function checkUpdate() {
 }
 
 
+
+
+// ------------------------------------------------------------------ VIDEO HƯỚNG DẪN (phát từ trang chủ ứng dụng)
+const VIDEOS = [
+  { f: '01', t: 'Bắt đầu sử dụng', s: 'Mở ứng dụng, cài vào máy, gửi góp ý', d: '0:32' },
+  { f: '02', t: 'Lập bản kê khai', s: 'Tạo hồ sơ, nhập Mục I, tài sản, thu nhập', d: '0:45' },
+  { f: '03', t: 'Tự rà soát và xuất file', s: 'Xem lỗi, sửa, xuất Word, sao lưu', d: '0:26' },
+  { f: '04', t: 'Năm sau và nhập bản cũ', s: 'Kỳ mới, biến động, nhập file Word cũ', d: '0:23' },
+  { f: '05', t: 'Dành cho đầu mối đơn vị', s: 'Tiếp nhận, thẩm định sơ bộ, phiếu đề nghị', d: '0:27' }
+];
+function videoBase() {
+  const home = K.APP.homeUrl || '';
+  return (location.protocol.startsWith('http') && home.startsWith(location.origin) ? '' : home) + 'video/';
+}
+function videoModal(i = 0) {
+  const base = videoBase();
+  const list = VIDEOS.map((v, k) => `<button class="vitem${k === i ? ' on' : ''}" data-vi="${k}"><img src="${base}${v.f}.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span><b>${k + 1}. ${esc(v.t)}</b><small>${esc(v.s)}</small><em>${v.d}</em></span></button>`).join('');
+  modal(ic('play') + 'Video hướng dẫn', `<div class="vwrap"><div class="vmain"><video id="vplayer" controls playsinline preload="metadata" poster="${base}${VIDEOS[i].f}-p.jpg" src="${base}${VIDEOS[i].f}.mp4"></video>
+    <div class="verr" id="verr" hidden>${ic('info')}<span>Không tải được video. Video được phát từ trang <b>${esc((K.APP.homeUrl || '').replace(/^https:\/\//, '').replace(/\/$/, ''))}</b> nên cần có kết nối mạng. Các tính năng khác của ứng dụng vẫn dùng bình thường khi không có mạng.</span></div>
+    <div class="vcap" id="vcap"><b>${i + 1}. ${esc(VIDEOS[i].t)}</b> — ${esc(VIDEOS[i].s)}</div></div>
+    <div class="vlist">${list}<p class="small mut">Video tự chuyển sang phần tiếp theo. Có thể tua, tạm dừng hoặc xem toàn màn hình.</p></div></div>`, [{ label: 'Đóng', cls: 'pri' }], 'lg vidm');
+  const m = document.querySelector('.modal.vidm:last-of-type'); const v = $('#vplayer', m);
+  const play = k => {
+    i = k; $('#verr', m).hidden = true; v.hidden = false;
+    v.poster = base + VIDEOS[k].f + '-p.jpg'; v.src = base + VIDEOS[k].f + '.mp4';
+    v.play().catch(() => {});
+    m.querySelectorAll('.vitem').forEach((b, j) => b.classList.toggle('on', j === k));
+    $('#vcap', m).innerHTML = `<b>${k + 1}. ${esc(VIDEOS[k].t)}</b> — ${esc(VIDEOS[k].s)}`;
+  };
+  m.addEventListener('click', e => { const b = e.target.closest('[data-vi]'); if (b) play(+b.dataset.vi); });
+  v.addEventListener('ended', () => { if (i < VIDEOS.length - 1) play(i + 1); });
+  v.addEventListener('error', () => { v.hidden = true; $('#verr', m).hidden = false; });
+  v.play().catch(() => {});
+}
 
 // ------------------------------------------------------------------ GÓP Ý, BÁO LỖI (Zalo / email)
 const FB_TYPES = { loi: 'Báo lỗi', gopy: 'Góp ý, đề xuất tính năng', hoi: 'Hỏi cách sử dụng', khac: 'Khác' };

@@ -1,6 +1,6 @@
 {
-  "version": "1.3.2",
+  "version": "1.3.3",
   "build": "2026-11-27",
-  "notes": "Thêm nút Góp ý: gửi phản hồi, báo lỗi cho tác giả qua Zalo hoặc email.",
+  "notes": "Thêm video hướng dẫn sử dụng (5 phần) ngay trong ứng dụng.",
   "download": "https://kekhaitaisan.github.io/KeKhaiTSTN.html"
 }
